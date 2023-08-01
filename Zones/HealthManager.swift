@@ -20,10 +20,53 @@ class HealthManager {
             return
         }
 
-        let readData: Set<HKObjectType> = [HKObjectType.quantityType(forIdentifier: .heartRate)!]
+        let readData: Set<HKObjectType> = [
+            HKObjectType.quantityType(forIdentifier: .heartRate)!,
+            HKObjectType.workoutType()
+        ]
 
         healthStore.requestAuthorization(toShare: nil, read: readData) { success, _ in
             completion(success)
+        }
+    }
+
+    func queryWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([HKWorkout]) -> Void) {
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+
+        let query = HKSampleQuery(sampleType: HKObjectType.workoutType(),
+                                  predicate: predicate,
+                                  limit: HKObjectQueryNoLimit,
+                                  sortDescriptors: [sortDescriptor])
+        { _, samples, error in
+            guard let samples = samples as? [HKWorkout], error == nil else {
+                completion([])
+                return
+            }
+
+            completion(samples)
+        }
+
+        healthStore.execute(query)
+    }
+
+    func queryHeartRateDataDuringWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([HKQuantitySample]) -> Void) {
+        queryWorkouts(from: startDate, to: endDate) { workouts in
+            let group = DispatchGroup()
+            var heartRateData: [HKQuantitySample] = []
+
+            workouts.forEach { workout in
+                group.enter()
+
+                self.queryHeartRateData(from: workout.startDate, to: workout.endDate) { samples in
+                    heartRateData.append(contentsOf: samples)
+                    group.leave()
+                }
+            }
+
+            group.notify(queue: .main) {
+                completion(heartRateData)
+            }
         }
     }
 
