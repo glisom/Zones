@@ -10,6 +10,7 @@ import SwiftUI
 
 struct CardioZonesView: View {
     @ObservedObject var viewModel: CardioZonesViewModel
+    @State var showZoneOne: Bool = false
 
     init(viewModel: CardioZonesViewModel) {
         self.viewModel = viewModel
@@ -18,27 +19,14 @@ struct CardioZonesView: View {
 
     var body: some View {
         VStack {
-            HStack {
-                Text("Start Date")
-                    .bold()
-                Spacer()
-                Text("End Date")
-                    .bold()
-            }
-            .padding(.horizontal)
-            HStack {
-                DatePicker("", selection: $viewModel.startDate, displayedComponents: .date)
-                    .labelsHidden()
-                Spacer()
-                DatePicker("", selection: $viewModel.endDate, displayedComponents: .date)
-                    .labelsHidden()
-            }
-            .padding(.horizontal)
+            Divider()
             Chart {
-//                BarMark(
-//                    x: .value("Zone", "Zone 1"),
-//                    y: .value("Minutes in Zone", viewModel.timeInZoneValue(.warmUp))
-//                )
+                if showZoneOne {
+                    BarMark(
+                        x: .value("Zone", "Zone 1"),
+                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.warmUp))
+                    )
+                }
                 BarMark(
                     x: .value("Zone", "Zone 2"),
                     y: .value("Minutes in Zone", viewModel.timeInZoneValue(.fatBurn))
@@ -60,8 +48,20 @@ struct CardioZonesView: View {
                 )
                 .foregroundStyle(.red)
             }
+            HStack {
+                DatePicker("Start", selection: $viewModel.startDate, displayedComponents: .date)
+
+                Spacer()
+                DatePicker("End", selection: $viewModel.endDate, displayedComponents: .date)
+            }
+            .padding(.horizontal)
+            Toggle("Show Zone 1", isOn: $showZoneOne)
+                .padding(.horizontal)
             List(CardioZone.allCases, id: \.self) { zone in
                 Text("\(String(describing: zone)): \(viewModel.timeInZone(zone))")
+            }
+            List(viewModel.workouts, id: \.uuid) { workout in
+                Text("\(workout.workoutActivityType.name)")
             }
         }
     }

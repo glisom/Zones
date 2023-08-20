@@ -6,7 +6,7 @@
 //
 
 import Combine
-import Foundation
+import HealthKit
 
 class CardioZonesViewModel: ObservableObject {
     private let healthManager = HealthManager()
@@ -15,6 +15,7 @@ class CardioZonesViewModel: ObservableObject {
     @Published var endDate: Date = .init()
 
     @Published var zones: [CardioZone: TimeInterval] = [:]
+    @Published var workouts: [HKWorkout] = []
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -57,11 +58,12 @@ class CardioZonesViewModel: ObservableObject {
         let healthManager = HealthManager()
         healthManager.requestAuthorization { success in
             if success {
-                healthManager.queryHeartRateData(from: startDate, to: endDate) { samples in
-                    let zones = healthManager.parseHeartRateIntoZones(samples: samples)
+                healthManager.queryHeartRateDataDuringWorkouts(from: startDate, to: endDate) { heartRateSamples, workouts in
+                    let zones = healthManager.parseHeartRateIntoZones(samples: heartRateSamples)
                     print(zones)
                     DispatchQueue.main.async {
                         self.zones = zones
+                        self.workouts = workouts
                     }
                 }
             }
