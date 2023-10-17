@@ -18,51 +18,52 @@ struct CardioZonesView: View {
     }
 
     var body: some View {
-        VStack {
-            Divider()
-            Chart {
-                if showZoneOne {
+        NavigationView {
+            VStack {
+                Chart {
+                    if showZoneOne {
+                        BarMark(
+                            x: .value("Zone", "Zone 1"),
+                            y: .value("Minutes in Zone", viewModel.timeInZoneValue(.warmUp))
+                        )
+                    }
                     BarMark(
-                        x: .value("Zone", "Zone 1"),
-                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.warmUp))
+                        x: .value("Zone", "Zone 2"),
+                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.fatBurn))
                     )
+                    .foregroundStyle(.cyan)
+                    BarMark(
+                        x: .value("Zone", "Zone 3"),
+                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.aerobic))
+                    )
+                    .foregroundStyle(.yellow)
+                    BarMark(
+                        x: .value("Zone", "Zone 4"),
+                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.anaerobic))
+                    )
+                    .foregroundStyle(.orange)
+                    BarMark(
+                        x: .value("Zone", "Zone 5"),
+                        y: .value("Minutes in Zone", viewModel.timeInZoneValue(.peak))
+                    )
+                    .foregroundStyle(.red)
                 }
-                BarMark(
-                    x: .value("Zone", "Zone 2"),
-                    y: .value("Minutes in Zone", viewModel.timeInZoneValue(.fatBurn))
-                )
-                .foregroundStyle(.cyan)
-                BarMark(
-                    x: .value("Zone", "Zone 3"),
-                    y: .value("Minutes in Zone", viewModel.timeInZoneValue(.aerobic))
-                )
-                .foregroundStyle(.yellow)
-                BarMark(
-                    x: .value("Zone", "Zone 4"),
-                    y: .value("Minutes in Zone", viewModel.timeInZoneValue(.anaerobic))
-                )
-                .foregroundStyle(.orange)
-                BarMark(
-                    x: .value("Zone", "Zone 5"),
-                    y: .value("Minutes in Zone", viewModel.timeInZoneValue(.peak))
-                )
-                .foregroundStyle(.red)
-            }
-            HStack {
-                DatePicker("Start", selection: $viewModel.startDate, displayedComponents: .date)
+                HStack {
+                    DatePicker("Start", selection: $viewModel.startDate, displayedComponents: .date)
 
-                Spacer()
-                DatePicker("End", selection: $viewModel.endDate, displayedComponents: .date)
-            }
-            .padding(.horizontal)
-            Toggle("Show Zone 1", isOn: $showZoneOne)
+                    Spacer()
+                    DatePicker("End", selection: $viewModel.endDate, displayedComponents: .date)
+                }
                 .padding(.horizontal)
-            List(CardioZone.allCases, id: \.self) { zone in
-                Text("\(String(describing: zone)): \(viewModel.timeInZone(zone))")
-            }
-            List(viewModel.workouts, id: \.uuid) { workout in
-                Text("\(workout.workoutActivityType.name)")
-            }
+                Toggle("Show Zone 1", isOn: $showZoneOne)
+                    .padding(.horizontal)
+                List(CardioZone.allCases, id: \.self) { zone in
+                    Text("\(String(describing: zone)): \(viewModel.timeInZone(zone))")
+                }
+                List(viewModel.workouts, id: \.uuid) { workout in
+                    Text("\(workout.workoutActivityType.name)")
+                }
+            }.navigationTitle("Zones")
         }
     }
 }
