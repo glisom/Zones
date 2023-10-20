@@ -14,6 +14,8 @@
 		7B19AEF92A77081700361A3B /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B19AEF82A77081700361A3B /* HealthManager.swift */; };
 		7B19AEFB2A77086B00361A3B /* CardioZonesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B19AEFA2A77086B00361A3B /* CardioZonesView.swift */; };
 		7B19AEFD2A7708D700361A3B /* CardioZonesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B19AEFC2A7708D700361A3B /* CardioZonesViewModel.swift */; };
+		7BBFBBC72AE211EB00F60575 /* ZoneListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBFBBC62AE211EB00F60575 /* ZoneListView.swift */; };
+		7BBFBBC92AE2161000F60575 /* WorkoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBFBBC82AE2161000F60575 /* WorkoutListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,9 @@
 		7B19AEFA2A77086B00361A3B /* CardioZonesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardioZonesView.swift; sourceTree = "<group>"; };
 		7B19AEFC2A7708D700361A3B /* CardioZonesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardioZonesViewModel.swift; sourceTree = "<group>"; };
 		7B19AEFE2A7715B900361A3B /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Zones.entitlements; sourceTree = "<group>"; };
+		7B1B2F2C2ADF575900957F44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7BBFBBC62AE211EB00F60575 /* ZoneListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneListView.swift; sourceTree = "<group>"; };
+		7BBFBBC82AE2161000F60575 /* WorkoutListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,7 @@
 		7B19AEE92A76FFD400361A3B /* Zones */ = {
 			isa = PBXGroup;
 			children = (
+				7B1B2F2C2ADF575900957F44 /* Info.plist */,
 				7B19AEFE2A7715B900361A3B /* Zones.entitlements */,
 				7B19AEEA2A76FFD400361A3B /* ZonesApp.swift */,
 				7B19AEEC2A76FFD400361A3B /* ContentView.swift */,
@@ -66,6 +72,8 @@
 				7B19AEF82A77081700361A3B /* HealthManager.swift */,
 				7B19AEFA2A77086B00361A3B /* CardioZonesView.swift */,
 				7B19AEFC2A7708D700361A3B /* CardioZonesViewModel.swift */,
+				7BBFBBC62AE211EB00F60575 /* ZoneListView.swift */,
+				7BBFBBC82AE2161000F60575 /* WorkoutListView.swift */,
 			);
 			path = Zones;
 			sourceTree = "<group>";
@@ -148,8 +156,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BBFBBC72AE211EB00F60575 /* ZoneListView.swift in Sources */,
 				7B19AEFB2A77086B00361A3B /* CardioZonesView.swift in Sources */,
 				7B19AEED2A76FFD400361A3B /* ContentView.swift in Sources */,
+				7BBFBBC92AE2161000F60575 /* WorkoutListView.swift in Sources */,
 				7B19AEFD2A7708D700361A3B /* CardioZonesViewModel.swift in Sources */,
 				7B19AEF92A77081700361A3B /* HealthManager.swift in Sources */,
 				7B19AEEB2A76FFD400361A3B /* ZonesApp.swift in Sources */,
@@ -285,7 +295,9 @@
 				DEVELOPMENT_TEAM = 3D247B7547;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zones/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Data is used to calculate the amount of time spent in cardio zones.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Health Data is used to calculate the amount of time spent in cardio zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -316,7 +328,9 @@
 				DEVELOPMENT_TEAM = 3D247B7547;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zones/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Data is used to calculate the amount of time spent in cardio zones.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Health Data is used to calculate the amount of time spent in cardio zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

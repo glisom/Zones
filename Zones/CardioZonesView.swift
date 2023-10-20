@@ -11,6 +11,9 @@ import SwiftUI
 struct CardioZonesView: View {
     @ObservedObject var viewModel: CardioZonesViewModel
     @State var showZoneOne: Bool = false
+    @State var showZoneListView = false
+    @State var showWorkoutListView = false
+    @State var zoneGoal = 200
 
     init(viewModel: CardioZonesViewModel) {
         self.viewModel = viewModel
@@ -21,6 +24,7 @@ struct CardioZonesView: View {
         NavigationView {
             VStack {
                 Chart {
+                    RuleMark(y: .value("Goal", zoneGoal))
                     if showZoneOne {
                         BarMark(
                             x: .value("Zone", "Zone 1"),
@@ -48,6 +52,7 @@ struct CardioZonesView: View {
                     )
                     .foregroundStyle(.red)
                 }
+                .aspectRatio(contentMode: .fit)
                 HStack {
                     DatePicker("Start", selection: $viewModel.startDate, displayedComponents: .date)
 
@@ -57,12 +62,29 @@ struct CardioZonesView: View {
                 .padding(.horizontal)
                 Toggle("Show Zone 1", isOn: $showZoneOne)
                     .padding(.horizontal)
-                List(CardioZone.allCases, id: \.self) { zone in
-                    Text("\(String(describing: zone)): \(viewModel.timeInZone(zone))")
+                TextField("Zone Goal", value: $zoneGoal, formatter: NumberFormatter())
+                    .padding(.horizontal)
+                Divider()
+                Button {
+                    showZoneListView.toggle()
+                } label: {
+                    Text("Show Zone Details")
+                        .font(.headline)
                 }
-                List(viewModel.workouts, id: \.uuid) { workout in
-                    Text("\(workout.workoutActivityType.name)")
+                .sheet(isPresented: $showZoneListView) {
+                    ZoneListView(viewModel: self.viewModel)
                 }
+                .padding()
+                Button {
+                    showWorkoutListView.toggle()
+                } label: {
+                    Text("Show Workouts")
+                        .font(.headline)
+                }
+                .sheet(isPresented: $showWorkoutListView) {
+                    WorkoutListView(viewModel: self.viewModel)
+                }
+                .padding()
             }.navigationTitle("Zones")
         }
     }

@@ -92,7 +92,9 @@ class HealthManager {
 
     func parseHeartRateIntoZones(samples: [HKQuantitySample]) -> [CardioZone: TimeInterval] {
         var zones: [CardioZone: TimeInterval] = [:]
-
+        guard samples.count > 0 else {
+            return [:]
+        }
         for i in 1..<samples.count {
             let sample = samples[i]
             let previousSample = samples[i - 1]
