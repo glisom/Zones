@@ -58,9 +58,7 @@ class CardioZonesViewModel: ObservableObject {
         let healthManager = HealthManager()
         healthManager.requestAuthorization { success in
             if success {
-                healthManager.queryHeartRateDataDuringWorkouts(from: startDate, to: endDate) { heartRateSamples, workouts in
-                    let zones = healthManager.parseHeartRateIntoZones(samples: heartRateSamples)
-                    print(zones)
+                healthManager.queryHeartRateDataDuringWorkouts(from: startDate, to: endDate) { zones, workouts in
                     DispatchQueue.main.async {
                         self.zones = zones
                         self.workouts = workouts

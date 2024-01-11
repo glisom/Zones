@@ -50,22 +50,25 @@ class HealthManager {
         healthStore.execute(query)
     }
 
-    func queryHeartRateDataDuringWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([HKQuantitySample], [HKWorkout]) -> Void) {
+    func queryHeartRateDataDuringWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([CardioZone: TimeInterval], [HKWorkout]) -> Void) {
         queryWorkouts(from: startDate, to: endDate) { workouts in
+            var zonesData: [CardioZone: TimeInterval] = [:]
             let group = DispatchGroup()
-            var heartRateData: [HKQuantitySample] = []
-
             workouts.forEach { workout in
                 group.enter()
-
-                self.queryHeartRateData(from: workout.startDate, to: workout.endDate) { samples in
-                    heartRateData.append(contentsOf: samples)
+                self.queryHeartRateData(from: workout.startDate, to: workout.endDate) { heartRateSamples in
+                    group.enter()
+                    self.parseHeartRateIntoZones(hearRateSamples: heartRateSamples) { zones in
+                        zones.forEach { zone, timeInterval in
+                            zonesData[zone, default: 0] += timeInterval
+                        }
+                        group.leave()
+                    }
                     group.leave()
                 }
             }
-
             group.notify(queue: .main) {
-                completion(heartRateData, workouts)
+                completion(zonesData, workouts)
             }
         }
     }
@@ -90,14 +93,15 @@ class HealthManager {
         healthStore.execute(query)
     }
 
-    func parseHeartRateIntoZones(samples: [HKQuantitySample]) -> [CardioZone: TimeInterval] {
+    func parseHeartRateIntoZones(hearRateSamples: [HKQuantitySample], completion: @escaping ([CardioZone: TimeInterval]) -> Void) {
         var zones: [CardioZone: TimeInterval] = [:]
-        guard samples.count > 0 else {
-            return [:]
+        guard hearRateSamples.count > 0 else {
+            completion([:])
+            return
         }
-        for i in 1..<samples.count {
-            let sample = samples[i]
-            let previousSample = samples[i - 1]
+        for i in 1..<hearRateSamples.count {
+            let sample = hearRateSamples[i]
+            let previousSample = hearRateSamples[i - 1]
             let timeInterval = sample.startDate.timeIntervalSince(previousSample.startDate)
 
             let heartRate = sample.quantity.doubleValue(for: HKUnit(from: "count/min"))
@@ -114,7 +118,7 @@ class HealthManager {
             zones[zone, default: 0] += timeInterval
         }
 
-        return zones
+        completion(zones)
     }
 }
 
@@ -219,6 +223,8 @@ extension HKWorkoutActivityType {
             return "Swim Bike Run"
         case .transition:
             return "Transition"
+        case .underwaterDiving:
+            return "Underwater Diving"
         @unknown default: return "Other"
         }
     }
