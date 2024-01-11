@@ -82,7 +82,9 @@ struct CardioZonesView: View {
                         .font(.headline)
                 }
                 .sheet(isPresented: $showWorkoutListView) {
-                    WorkoutListView(viewModel: self.viewModel)
+                    WorkoutListView(viewModel: self.viewModel) { workouts in
+                        self.viewModel.filterOnWorkouts(workouts)
+                    }
                 }
                 .padding()
             }.navigationTitle("Zones")

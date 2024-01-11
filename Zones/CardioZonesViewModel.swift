@@ -67,4 +67,18 @@ class CardioZonesViewModel: ObservableObject {
             }
         }
     }
+
+    func filterOnWorkouts(_ workouts: [HKWorkout]) {
+        let healthManager = HealthManager()
+        healthManager.requestAuthorization { success in
+            if success {
+                healthManager.queryHeartRateDataForWorkouts(workouts: workouts) { zones, workouts in
+                    DispatchQueue.main.async {
+                        self.zones = zones
+                        self.workouts = workouts
+                    }
+                }
+            }
+        }
+    }
 }

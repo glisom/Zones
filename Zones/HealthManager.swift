@@ -49,25 +49,31 @@ class HealthManager {
 
         healthStore.execute(query)
     }
-
-    func queryHeartRateDataDuringWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([CardioZone: TimeInterval], [HKWorkout]) -> Void) {
-        queryWorkouts(from: startDate, to: endDate) { workouts in
-            var zonesData: [CardioZone: TimeInterval] = [:]
-            let group = DispatchGroup()
-            workouts.forEach { workout in
+    
+    func queryHeartRateDataForWorkouts(workouts: [HKWorkout], completion: @escaping ([CardioZone: TimeInterval], [HKWorkout]) -> Void) {
+        var zonesData: [CardioZone: TimeInterval] = [:]
+        let group = DispatchGroup()
+        workouts.forEach { workout in
+            group.enter()
+            self.queryHeartRateData(from: workout.startDate, to: workout.endDate) { heartRateSamples in
                 group.enter()
-                self.queryHeartRateData(from: workout.startDate, to: workout.endDate) { heartRateSamples in
-                    group.enter()
-                    self.parseHeartRateIntoZones(hearRateSamples: heartRateSamples) { zones in
-                        zones.forEach { zone, timeInterval in
-                            zonesData[zone, default: 0] += timeInterval
-                        }
-                        group.leave()
+                self.parseHeartRateIntoZones(hearRateSamples: heartRateSamples) { zones in
+                    zones.forEach { zone, timeInterval in
+                        zonesData[zone, default: 0] += timeInterval
                     }
                     group.leave()
                 }
+                group.leave()
             }
-            group.notify(queue: .main) {
+        }
+        group.notify(queue: .main) {
+            completion(zonesData, workouts)
+        }
+    }
+
+    func queryHeartRateDataDuringWorkouts(from startDate: Date, to endDate: Date, completion: @escaping ([CardioZone: TimeInterval], [HKWorkout]) -> Void) {
+        queryWorkouts(from: startDate, to: endDate) { workouts in
+            self.queryHeartRateDataForWorkouts(workouts: workouts) { zonesData, workouts in
                 completion(zonesData, workouts)
             }
         }
